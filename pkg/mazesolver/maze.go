@@ -24,14 +24,13 @@ type Maze [][]Node
 func CreateMaze(imgPath string) *Maze {
 	img := LoadImage(imgPath)
 	bounds := img.Bounds()
-	m := make(Maze, bounds.Max.Y)
+	m := make(Maze, bounds.Dy())
 	for y := range m {
-		m[y] = make([]Node, bounds.Max.X)
+		m[y] = make([]Node, bounds.Dx())
 		for x, node := range m[y] {
-			if r, g, b, _ := img.At(x, y).RGBA(); r & g & b == 0 {
+			if r, g, b, _ := img.At(x, y).RGBA(); r&g&b == 0 {
 				node.isWall = true
 			}
-			
 		}
 	}
 	return &m
