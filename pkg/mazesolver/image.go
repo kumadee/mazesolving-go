@@ -3,6 +3,7 @@ package mazesolver
 import (
 	"fmt"
 	"image"
+	"log"
 	"os"
 
 	// Package image/jpeg is not used explicitly in the code below,
@@ -12,7 +13,6 @@ import (
 	// _ "image/gif"
 	"image/color"
 	"image/png"
-	_ "image/png"
 	// _ "image/jpeg"
 )
 
@@ -23,6 +23,17 @@ func LoadImage(path string) image.Image {
 	img, _, err := image.Decode(reader)
 	CheckError(err)
 	return img
+}
+
+func ConvertToRGBA(i image.Image) *image.RGBA {
+	b := i.Bounds()
+	m := image.NewRGBA(b)
+	for y := 0; y < b.Dy(); y++ {
+		for x := 0; x < b.Dx(); x++ {
+			m.Set(x, y, i.At(x, y))
+		}
+	}
+	return m
 }
 
 func TraverseImage(path string) {
@@ -38,32 +49,41 @@ func TraverseImage(path string) {
 	}
 }
 
-func HighlightPathImage(img *image.RGBA, s []*Node, path string, highlightNode bool) {
+func HighlightPathImage(m image.Image, s []*Node, path string, highlightNode bool) {
 	var prev *Node
-	blue := color.RGBA{0, 0, 255, 0xff}
-	yellow := color.RGBA{0, 255, 255, 0xff}
-	c := blue
-	if highlightNode {
-		c = yellow
+	im, ok := m.(*image.Paletted)
+	if !ok {
+		log.Fatal("Unable to convert image to image.Paletted.")
 	}
-	for _, n := range s {
-		img.SetRGBA(n.position.x, n.position.y, c)
-		if prev == nil {
-			prev = n
-			continue
+	img := ConvertToRGBA(im)
+	var p color.RGBA
+	for i, n := range s {
+		r := uint8((i * 255) / len(s))
+		c := color.RGBA{r, 0, 255 - r, 255}
+		if highlightNode {
+			p = color.RGBA{255 - r, 255, r, 255}
+		} else {
+			p = c
 		}
-		if prev.position.x == n.position.x {
-			for i := min(prev.position.y, n.position.y) + 1; i < max(prev.position.y, n.position.y); i++ {
-				img.SetRGBA(n.position.x, i, blue)
+		img.Set(n.position.x, n.position.y, p)
+		switch {
+		case prev == nil:
+		case prev.position.x == n.position.x:
+			for yi := min(prev.position.y, n.position.y) + 1; yi < max(prev.position.y, n.position.y); yi++ {
+				img.Set(n.position.x, yi, c)
 			}
-			continue
-		}
-		if prev.position.y == n.position.y {
-			for i := min(prev.position.x, n.position.x) + 1; i < max(prev.position.x, n.position.x); i++ {
-				img.SetRGBA(i, n.position.y, blue)
+		case prev.position.y == n.position.y:
+			for xi := min(prev.position.x, n.position.x) + 1; xi < max(prev.position.x, n.position.x); xi++ {
+				img.Set(xi, n.position.y, c)
 			}
 		}
+		prev = n
 	}
+	SaveImage(img, path)
+}
+
+func SaveImage(img image.Image, path string) {
 	f, _ := os.Create(path)
 	CheckError(png.Encode(f, img))
+	defer f.Close()
 }
