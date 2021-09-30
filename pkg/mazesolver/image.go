@@ -49,6 +49,23 @@ func TraverseImage(path string) {
 	}
 }
 
+func HighlightNodesOnlyImage(i image.Image, m *Maze, path string) {
+	im, ok := i.(*image.Paletted)
+	if !ok {
+		log.Fatal("Unable to convert image to image.Paletted.")
+	}
+	img := ConvertToRGBA(im)
+	c := color.RGBA{255, 0, 0, 255}
+	for _, row := range m.nodes {
+		for _, n := range row {
+			if n != nil {
+				img.Set(n.position.x, n.position.y, c)
+			}
+		}
+	}
+	SaveImage(img, path)
+}
+
 func HighlightPathImage(m image.Image, s []*Node, path string, highlightNode bool) {
 	var prev *Node
 	im, ok := m.(*image.Paletted)

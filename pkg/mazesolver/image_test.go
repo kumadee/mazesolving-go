@@ -26,6 +26,27 @@ func TestSaveImage(t *testing.T) {
 	}
 }
 
+func TestHighlightNodesOnlyImage(t *testing.T) {
+	testCases := []struct {
+		path string
+		out  string
+	}{
+		{
+			path: "../../images/tiny.png",
+			out:  "../../solutions/tiny_maze_nodes.png",
+		},
+		{
+			path: "../../images/normal.png",
+			out:  "../../solutions/normal_maze_nodes.png",
+		},
+	}
+	for _, tc := range testCases {
+		img := LoadImage(tc.path)
+		m := NewMaze(img)
+		HighlightNodesOnlyImage(img, m, tc.out)
+	}
+}
+
 func TestHighlightPathImage(t *testing.T) {
 	testCases := []struct {
 		path string
