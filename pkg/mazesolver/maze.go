@@ -18,6 +18,23 @@ type Node struct {
 	down     *Node
 }
 
+func (n *Node) AdjacentEdges() []*Node {
+	var e []*Node
+	if n.left != nil {
+		e = append(e, n.left)
+	}
+	if n.right != nil {
+		e = append(e, n.right)
+	}
+	if n.top != nil {
+		e = append(e, n.top)
+	}
+	if n.down != nil {
+		e = append(e, n.down)
+	}
+	return e
+}
+
 type Maze struct {
 	nodes [][]*Node
 	start *Node
@@ -44,6 +61,7 @@ func NewMaze(img image.Image) *Maze {
 				break inner
 			case path && y == (rec.Dy()-1):
 				m.end = &Node{position: Position{x, y}}
+				addNeighbours(m.end, &m, true, false)
 				m.nodes[y][x] = m.end
 				break inner
 			case path:

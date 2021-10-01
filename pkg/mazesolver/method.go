@@ -14,10 +14,10 @@ var (
 )
 
 type Options struct {
-	method         int
-	inImg          string
-	outImg         string
-	highlightNodes bool
+	Method         int
+	InImg          string
+	OutImg         string
+	HighlightNodes bool
 }
 
 func (opt *Options) Solve() {
@@ -26,13 +26,13 @@ func (opt *Options) Solve() {
 		Dfs: DfsSolve,
 	}
 	// make maze data structure out of the inImg
-	img := LoadImage(opt.inImg)
+	img := LoadImage(opt.InImg)
 	mz := NewMaze(img)
 	// find solution for the maze
-	sol, err := m[opt.method](mz)
+	sol, err := m[opt.Method](mz)
 	CheckError(err)
 	// make outImg out of maze data structure
 	if sol != nil {
-		HighlightPathImage(img, sol, opt.outImg, opt.highlightNodes)
+		HighlightPathImage(img, sol, opt.OutImg, opt.HighlightNodes)
 	}
 }

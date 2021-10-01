@@ -17,11 +17,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/kumadee/mazesolver/pkg/mazesolver"
 	"github.com/spf13/cobra"
 )
+
+var InImg, OutImg string
 
 // solveCmd represents the solve command
 var solveCmd = &cobra.Command{
@@ -34,8 +34,12 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("solve called")
-		opt := mazesolver.Options{}
+		opt := mazesolver.Options{
+			Method:         mazesolver.Bfs,
+			InImg:          InImg,
+			OutImg:         OutImg,
+			HighlightNodes: true,
+		}
 		opt.Solve()
 	},
 }
@@ -52,4 +56,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// solveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	solveCmd.Flags().StringVarP(&InImg, "input", "i", "images/tiny.png", "Maze input image")
+	solveCmd.Flags().StringVarP(&OutImg, "output", "o", "solutions/tiny.png", "Maze solution image")
 }
