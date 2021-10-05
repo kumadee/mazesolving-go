@@ -9,7 +9,7 @@ func BfsSolve(m *Maze) ([]*Node, error) {
 	log.Println("Breadth First Search")
 	// run the algo
 	q := list.New()
-	par := make(map[*Node]*Node)
+	par := make(map[Position]Position)
 	q.PushBack(m.start)
 	m.start.visited = true
 	for q.Len() != 0 {
@@ -25,7 +25,7 @@ func BfsSolve(m *Maze) ([]*Node, error) {
 		for _, edg := range v.AdjacentEdges() {
 			if !edg.visited {
 				edg.visited = true
-				par[edg] = v
+				par[edg.position] = v.position
 				q.PushBack(edg)
 			}
 		}
@@ -33,17 +33,18 @@ func BfsSolve(m *Maze) ([]*Node, error) {
 	return nil, NoSolution
 }
 
-func Path(p map[*Node]*Node, m *Maze) []*Node {
+func Path(p map[Position]Position, m *Maze) []*Node {
 	var sol []*Node
 	sol = append(sol, m.end)
 	for sol[len(sol)-1] != m.start {
-		sol = append(sol, p[sol[len(sol)-1]])
+		pos := p[sol[len(sol)-1].position]
+		sol = append(sol, m.nodes[pos.y][pos.x])
 	}
 	for _, n := range sol {
 		log.Println(n.position)
 	}
 	for k, v := range p {
-		log.Println(k.position, "->", v.position)
+		log.Println(k, "->", v)
 	}
 	return sol
 }
