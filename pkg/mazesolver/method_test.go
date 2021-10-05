@@ -13,6 +13,14 @@ var testSolveCases = []struct {
 			HighlightNodes: true,
 		},
 	},
+	{
+		opt: Options{
+			Method:         Bfs,
+			InImg:          "../../images/normal.png",
+			OutImg:         "../../solutions/normal.png",
+			HighlightNodes: true,
+		},
+	},
 }
 
 func TestSolve(t *testing.T) {
