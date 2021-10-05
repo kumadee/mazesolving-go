@@ -116,12 +116,18 @@ func addNewNode(p Position, img image.Image, m *Maze) {
 	r := isWall(img.At(p.x+1, p.y))
 	t := isWall(img.At(p.x, p.y-1))
 	d := isWall(img.At(p.x, p.y+1))
-	// left != wall & top == wall & right == wall & down == wall: (deadend node)
-	// left == wall & top == wall & right != wall & down == wall: (deadend node)
-	// left == wall & top != wall & right == wall & down == wall: (deadend node)
-	// left == wall & top == wall & right == wall & down != wall: (deadend node)
-	if (l && t && !r && !d) || (l && !t && !r && d) || (!l && !t && !r) || (!l && !t && r && d) || (!l && t && !r && !d) || (!l && t && r && !d) || (!l && !t && r && !d) || (l && !t && !r && !d) {
-		m.nodes[p.y][p.x] = &Node{position: Position{p.x, p.y}}
-		addNeighbours(m.nodes[p.y][p.x], m, l, t)
+
+	validNode := (l && t && !r && !d) || (l && !t && !r && d) || (!l && !t && !r) || (!l && !t && r && d) || (!l && t && !r && !d) || (!l && t && r && !d) || (!l && !t && r && !d) || (l && !t && !r && !d)
+	deadEndNode := (!l && t && r && d) || (l && !t && r && d) || (l && t && !r && d) || (l && t && r && !d)
+
+	if !(validNode || deadEndNode) {
+		return
+	}
+	m.nodes[p.y][p.x] = &Node{position: Position{p.x, p.y}}
+	addNeighbours(m.nodes[p.y][p.x], m, l, t)
+
+	if deadEndNode {
+		// Marking them as already visited as they are deadends
+		m.nodes[p.y][p.x].visited = true
 	}
 }
