@@ -40,11 +40,5 @@ func Path(p map[Position]Position, m *Maze) []*Node {
 		pos := p[sol[len(sol)-1].position]
 		sol = append(sol, m.nodes[pos.y][pos.x])
 	}
-	for _, n := range sol {
-		log.Println(n.position)
-	}
-	for k, v := range p {
-		log.Println(k, "->", v)
-	}
 	return sol
 }
