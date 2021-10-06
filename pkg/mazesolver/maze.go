@@ -6,7 +6,7 @@ import (
 )
 
 type Position struct {
-	x, y int
+	x, y int16
 }
 
 type Node struct {
@@ -51,22 +51,24 @@ func NewMaze(img image.Image) *Maze {
 	inner:
 		for x := range m.nodes[y] {
 			path := !isWall(img.At(x, y))
-			switch {
-			case !path:
+			if !path {
 				// This is a wall
 				continue
-			case path && y == 0:
-				m.start = &Node{position: Position{x, y}}
+			}
+			p := Position{int16(x), int16(y)}
+			switch {
+			case y == 0:
+				m.start = &Node{position: p}
 				m.nodes[y][x] = m.start
 				break inner
-			case path && y == (rec.Dy()-1):
-				m.end = &Node{position: Position{x, y}}
+			case y == (rec.Dy() - 1):
+				m.end = &Node{position: p}
 				addNeighbours(m.end, &m, true, false)
 				m.nodes[y][x] = m.end
 				break inner
-			case path:
+			default:
 				// Check if new node has to be added in maze
-				addNewNode(Position{x, y}, img, &m)
+				addNewNode(p, img, &m)
 			}
 		}
 	}
@@ -112,10 +114,12 @@ func addNeighbours(n *Node, m *Maze, l bool, t bool) {
 }
 
 func addNewNode(p Position, img image.Image, m *Maze) {
-	l := isWall(img.At(p.x-1, p.y))
-	r := isWall(img.At(p.x+1, p.y))
-	t := isWall(img.At(p.x, p.y-1))
-	d := isWall(img.At(p.x, p.y+1))
+	x := int(p.x)
+	y := int(p.y)
+	l := isWall(img.At(x-1, y))
+	r := isWall(img.At(x+1, y))
+	t := isWall(img.At(x, y-1))
+	d := isWall(img.At(x, y+1))
 
 	validNode := (l && t && !r && !d) || (l && !t && !r && d) || (!l && !t && !r) || (!l && !t && r && d) || (!l && t && !r && !d) || (!l && t && r && !d) || (!l && !t && r && !d) || (l && !t && !r && !d)
 	deadEndNode := (!l && t && r && d) || (l && !t && r && d) || (l && t && !r && d) || (l && t && r && !d)

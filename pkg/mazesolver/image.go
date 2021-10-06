@@ -59,7 +59,7 @@ func HighlightNodesOnlyImage(i image.Image, m *Maze, path string) {
 	for _, row := range m.nodes {
 		for _, n := range row {
 			if n != nil {
-				img.Set(n.position.x, n.position.y, c)
+				img.Set(int(n.position.x), int(n.position.y), c)
 			}
 		}
 	}
@@ -82,16 +82,20 @@ func HighlightPathImage(m image.Image, s []*Node, path string, highlightNode boo
 		} else {
 			p = c
 		}
-		img.Set(n.position.x, n.position.y, p)
+		nX := int(n.position.x)
+		nY := int(n.position.y)
+		img.Set(nX, nY, p)
 		switch {
 		case prev == nil:
 		case prev.position.x == n.position.x:
-			for yi := min(prev.position.y, n.position.y) + 1; yi < max(prev.position.y, n.position.y); yi++ {
-				img.Set(n.position.x, yi, c)
+			pY := int(prev.position.y)
+			for yi := min(pY, nY) + 1; yi < max(pY, nY); yi++ {
+				img.Set(nX, yi, c)
 			}
 		case prev.position.y == n.position.y:
-			for xi := min(prev.position.x, n.position.x) + 1; xi < max(prev.position.x, n.position.x); xi++ {
-				img.Set(xi, n.position.y, c)
+			pX := int(prev.position.x)
+			for xi := min(pX, nX) + 1; xi < max(pX, nX); xi++ {
+				img.Set(xi, nY, c)
 			}
 		}
 		prev = n
