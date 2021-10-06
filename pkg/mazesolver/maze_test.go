@@ -2,7 +2,7 @@ package mazesolver
 
 import "testing"
 
-var testCases = []struct {
+var testMazeCases = []struct {
 	path      string
 	nodeCount int
 }{
@@ -16,8 +16,8 @@ var testCases = []struct {
 	},
 }
 
-func TestCreateMaze(t *testing.T) {
-	for _, tc := range testCases {
+func TestNewMaze(t *testing.T) {
+	for _, tc := range testMazeCases {
 		img := LoadImage(tc.path)
 		m := NewMaze(img)
 		a := m.CountNodes()
@@ -27,11 +27,18 @@ func TestCreateMaze(t *testing.T) {
 	}
 }
 
-func BenchmarkCreateMaze(b *testing.B) {
+func benchmarkNewMaze(i int, b *testing.B) {
+	tc := testMazeCases[i]
+	img := LoadImage(tc.path)
 	for i := 0; i < b.N; i++ {
-		for _, tc := range testCases {
-			img := LoadImage(tc.path)
-			NewMaze(img)
-		}
+		NewMaze(img)
 	}
+}
+
+func BenchmarkTinyNewMaze(b *testing.B) {
+	benchmarkNewMaze(0, b)
+}
+
+func BenchmarkNormalNewMaze(b *testing.B) {
+	benchmarkNewMaze(1, b)
 }
