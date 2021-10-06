@@ -21,6 +21,22 @@ var testSolveCases = []struct {
 			HighlightNodes: true,
 		},
 	},
+	{
+		opt: Options{
+			Method:         Dfs,
+			InImg:          "../../images/tiny.png",
+			OutImg:         "../../solutions/tiny_dfs.png",
+			HighlightNodes: true,
+		},
+	},
+	{
+		opt: Options{
+			Method:         Dfs,
+			InImg:          "../../images/normal.png",
+			OutImg:         "../../solutions/normal_dfs.png",
+			HighlightNodes: true,
+		},
+	},
 }
 
 func TestSolve(t *testing.T) {
